@@ -1,0 +1,169 @@
+// Formular-Validierung
+<?php
+function validateForm($data) {
+    $errors = [];
+
+    // Überprüfen, ob Name ausgefüllt wurde
+    if (empty($data['name'])) {
+        $errors['name'] = "Name ist erforderlich.";
+    }
+
+    // Überprüfen, ob die E-Mail-Adresse gültig ist
+    if (empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+        $errors['email'] = "Gültige E-Mail-Adresse ist erforderlich.";
+    }
+
+    // Überprüfen, ob Nachricht ausgefüllt wurde
+    if (empty($data['message'])) {
+        $errors['message'] = "Nachricht ist erforderlich.";
+    }
+
+    return $errors;
+}
+
+// Beispiel: Formulardaten validieren
+$data = [
+    'name' => $_POST['name'] ?? '',
+    'email' => $_POST['email'] ?? '',
+    'message' => $_POST['message'] ?? ''
+];
+
+$errors = validateForm($data);
+if (empty($errors)) {
+    // Daten sind gültig, weiterverarbeiten
+} else {
+    // Fehler ausgeben
+    foreach ($errors as $field => $error) {
+        echo "<p>$field: $error</p>";
+    }
+}
+?>
+
+// Daten in MySQL speichern
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "testdb";
+
+// Verbindung aufbauen
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verbindung prüfen
+if ($conn->connect_error) {
+    die("Verbindung fehlgeschlagen: " . $conn->connect_error);
+}
+
+// SQL-Statement zum Einfügen von Daten
+$stmt = $conn->prepare("INSERT INTO users (name, email, message) VALUES (?, ?, ?)");
+$stmt->bind_param("sss", $name, $email, $message);
+
+// Formulardaten
+$name = $_POST['name'];
+$email = $_POST['email'];
+$message = $_POST['message'];
+
+// Ausführen
+if ($stmt->execute()) {
+    echo "Neuer Datensatz erfolgreich erstellt";
+} else {
+    echo "Fehler: " . $stmt->error;
+}
+
+// Verbindung schließen
+$stmt->close();
+$conn->close();
+?>
+
+//Datei hochladen
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['file'])) {
+    $fileTmpPath = $_FILES['file']['tmp_name'];
+    $fileName = $_FILES['file']['name'];
+    $fileSize = $_FILES['file']['size'];
+    $fileType = $_FILES['file']['type'];
+    $uploadDir = 'uploads/';
+
+    // Zielpfad
+    $destPath = $uploadDir . $fileName;
+
+    // Datei hochladen
+    if (move_uploaded_file($fileTmpPath, $destPath)) {
+        echo 'Datei erfolgreich hochgeladen!';
+    } else {
+        echo 'Fehler beim Hochladen der Datei.';
+    }
+}
+?>
+
+<form action="" method="post" enctype="multipart/form-data">
+    Wählen Sie eine Datei zum Hochladen:
+    <input type="file" name="file">
+    <input type="submit" value="Datei hochladen">
+</form>
+
+// Session-Management
+<?php
+session_start();
+
+// Benutzer anmelden
+if (isset($_POST['username']) && isset($_POST['password'])) {
+    $_SESSION['username'] = $_POST['username'];
+    echo "Willkommen, " . $_SESSION['username'] . "!";
+}
+
+// Benutzer abmelden
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header("Location: index.php");
+}
+
+// Eingabeformular
+if (!isset($_SESSION['username'])) {
+    echo '<form method="POST">
+            Benutzername: <input type="text" name="username" required><br>
+            Passwort: <input type="password" name="password" required><br>
+            <input type="submit" value="Anmelden">
+          </form>';
+} else {
+    echo 'Eingeloggt als: ' . $_SESSION['username'] . ' <a href="?logout=true">Abmelden</a>';
+}
+?>
+
+// Fehlerbehandlung
+<?php
+try {
+    // Beispiel: Division durch Null
+    $a = 5;
+    $b = 0;
+    if ($b == 0) {
+        throw new Exception("Division durch Null ist nicht erlaubt");
+    }
+    echo $a / $b;
+} catch (Exception $e) {
+    echo 'Fehler: ' . $e->getMessage();
+}
+?>
+
+//Sanitizing und Escaping von Benutzereingaben
+<?php
+$name = htmlspecialchars($_POST['name']);
+$email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "testdb";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+$stmt = $conn->prepare("INSERT INTO users (name, email) VALUES (?, ?)");
+$stmt->bind_param("ss", $name, $email);
+$stmt->execute();
+?>
+
+//Simpler Redirect
+<?php
+header("Refresh: 5; url=https://www.example.com");
+echo "Sie werden in 5 Sekunden weitergeleitet...";
+?>
+
