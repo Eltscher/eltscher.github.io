@@ -48,4 +48,24 @@
     </div>
   </div>
 </section>
-<footer>© 2025 Eltscher</footer></body></html>
+<footer>© 2025 Eltscher</footer>
+<script>
+  document.querySelectorAll('.nav a').forEach(link => {
+    if (link.href === location.href) {
+      link.style.background = 'rgba(255,255,255,0.12)';
+      link.style.fontWeight = '700';
+    }
+  });
+</script>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+  style="position:fixed;bottom:28px;right:28px;display:none;
+         background:#2f75ff;color:#fff;border:none;border-radius:50%;
+         width:44px;height:44px;font-size:20px;cursor:pointer;z-index:999">↑</button>
+
+<script>
+  const btn = document.getElementById('top-btn');
+  window.addEventListener('scroll', () => {
+    btn.style.display = window.scrollY > 300 ? 'block' : 'none';
+  });
+</script>
+</body></html>
