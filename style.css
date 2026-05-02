@@ -419,7 +419,7 @@ footer{padding:30px 24px;text-align:center;color:var(--muted);border-top:1px das
 .sprint-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 24px;  ´
+  gap: 24px;
   margin-bottom: 40px; 
 }
 .sprint-card {
@@ -670,3 +670,12 @@ i.fa, i.fas, i.fab, i.fa-solid, i.fa-regular, i.fa-brands {
 }
 
 li i.fa, li i.fas, li i.fab { font-size: 0.95em; margin-right: 8px; }
+.cert, .project-card, .scrum-card, .card {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.cert.visible, .project-card.visible, .scrum-card.visible, .card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
